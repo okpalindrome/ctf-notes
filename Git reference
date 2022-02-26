@@ -55,6 +55,10 @@ $git push origin new_branch_name  (recommended)
 #Delete the branch
 
 $git branch -d branch_name
+//locally
+
+$git push origin --delete branch_name
+//delete the branch in git server
 
 #Change between different branches
 
