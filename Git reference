@@ -1,0 +1,98 @@
+Command Line Git - Udemy
+
+
+Generate the RSA keys 
+id_rsa (private key)
+id_rsa.pub (public key) - paste in SSH GitHub setting section
+
+Clone a repo
+
+Create a new file(README.md)
+
+
+#Add the changes to staging
+
+$git add . 
+//adds all files to staging
+
+$git add ‘file_name’ 
+//adds only specified file to staging
+
+
+#Commit the changes with message
+
+$git commit -m ‘message here’ 
+
+
+#Push to git repo
+
+$git push -u origin HEAD - Danger
+//initial command to push all of local changes to GitHub server
+
+$git branch 
+//know which branch are you in
+
+$git status 
+//to see which are on change, staging
+
+
+
+#Create a separate branch, when you’re not fully sure to push your changes to main repo(not ready to finalise it). Store your changes on a new separate branch
+
+$git checkout -b new_branch_name
+//changed the branch to new branch
+
+$git add .
+//add all changes to new branch staging
+
+$git push -u origin HEAD  
+//all your local changes will made to main repo. Danger
+
+$git push origin new_branch_name  (recommended)
+//push all changes to new branch
+//When changes first pushed to new branch, it creates a new pull request URL, copy that and go ahead and write a proper pull request message and description of all changes you made on your branch and now you want that to be pushed/merge to main master branch/repo.	
+
+#Delete the branch
+
+$git branch -d branch_name
+
+#Change between different branches
+
+$git checkout master
+
+#Clone the latest version back to local, to work on with new changes that are made by you or your team. After merging the new changes.
+
+
+$git pull
+//make sure you pull it from master branch
+
+
+
+#gitignore - informing the git to ignore while committing and push it main repo
+
+Create a .gitignore file, inside list the file name
+Eg. 
+
+$nano .gitignore
+filename.type
+*.type
+
+$git add ‘.gitignore’
+$git commit -m ‘ignore the unnecessary files’
+$git push -u origin branch_name
+
+
+
+#Git Diff 
+
+$git status
+Branchname1
+Branchname2
+Main
+
+$git diff branchname1..branchname2 
+
+
+References - 
+https://www.git-tower.com/blog/git-cheat-sheet
+https://learngitbranching.js.org/?locale=en_US 
