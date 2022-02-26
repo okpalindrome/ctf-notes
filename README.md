@@ -1,1 +1,6 @@
-Yes, you cloned the repo successfully!
+Personal collection over the specific targets!
+
+- Mainly contains the subdomains
+- Notes while engaging the target
+- And the TODO list (if any)
+
