@@ -39,8 +39,21 @@ $git status
 
 #Create a separate branch, when you’re not fully sure to push your changes to main repo(not ready to finalise it). Store your changes on a new separate branch
 
+$git branch new_branch_name
+//creates new branch
+
+$git branch
+$git branch -vv
+//lists all branches locally
+
+$git branch -r
+//lists all remote branches
+
+$git branch -a
+//lists all local & remote branches
+
 $git checkout -b new_branch_name
-//changed the branch to new branch
+//creates and changes the current branch to newly created one
 
 $git add .
 //add all changes to new branch staging
@@ -98,5 +111,6 @@ $git diff branchname1..branchname2
 
 
 References - 
+https://www.nobledesktop.com/learn/git/git-branches
 https://www.git-tower.com/blog/git-cheat-sheet
 https://learngitbranching.js.org/?locale=en_US 
