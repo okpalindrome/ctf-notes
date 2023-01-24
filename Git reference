@@ -109,6 +109,12 @@ Main
 
 $git diff branchname1..branchname2 
 
+#Remove a specific file from commit history. The command will remove all the commits having the file credentials.txt and filter-branch will create commits in order to fix up the commits history.
+git filter-branch --force --index-filter \
+"git rm --cached --ignore-unmatch .aws/credentials.txt" \
+--prune-empty --tag-name-filter cat -- --all
+
+
 
 References - 
 https://www.nobledesktop.com/learn/git/git-branches
