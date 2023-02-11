@@ -5,7 +5,3 @@ Personal collection over the specific targets!
 - Target map details from DNSDumpter or any opesource tools
 - Notes while engaging the target
 - And the TODO list (if any)
-
-
--------
-Test section 3
