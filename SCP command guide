@@ -1,0 +1,34 @@
+Guide: SCP to securely transfer files/folders in linux
+
+Case 1: Transfer a file from local to remote machine
+
+//local machine
+scp filename remote-username@remote-ip:/home/username
+Need to enter remote machine’s password for the given user
+
+
+Case 2: Transfer a directory from local to remote machine
+
+//local machine
+scp -r directory-name remote-username@remote-ip:/home/username
+Need to enter remote machine’s password for the given user
+
+
+Case 3: Transfer a file from remote machine to local
+
+//local machine
+scp remote-username@remote-ip:/home/username/filename local-machine-desti-path
+Need to enter remote machine’s password for the given user
+
+
+Case 4: If the ssh service is running on a different port on the remote machine
+
+//local machine
+scp remote-username@remote-ip:/home/username/filename local-machine-desti-path -P 1234
+Need to enter remote machine’s password for the given user
+
+
+Case 4: If you have a public access key, not a remote machine’s user password
+
+//local machine
+scp remote-username@remote-ip:/home/username/filename local-machine-desti-path -i /path-to-public-key
