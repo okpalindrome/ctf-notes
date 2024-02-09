@@ -1,0 +1,6 @@
+Resource - https://tryhackme.com/room/introtoshells
+
+python -c 'import pty;pty.spawn("/bin/bash")'
+export TERM=xterm
+^z
+stty raw -echo; fg
